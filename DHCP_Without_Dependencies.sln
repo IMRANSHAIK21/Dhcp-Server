@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DHCP_Without_Dependencies", "DHCP_Without_Dependencies\DHCP_Without_Dependencies.csproj", "{96B19E0E-1540-468C-865B-8191EB36E646}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96B19E0E-1540-468C-865B-8191EB36E646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96B19E0E-1540-468C-865B-8191EB36E646}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96B19E0E-1540-468C-865B-8191EB36E646}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96B19E0E-1540-468C-865B-8191EB36E646}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9AF9AD9F-B5D3-44D9-99E8-3DF843B87E1C}
+	EndGlobalSection
+EndGlobal
