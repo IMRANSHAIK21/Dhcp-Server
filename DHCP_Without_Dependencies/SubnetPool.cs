@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DHCP_Without_Dependencies
-{
+{ 
     public class SubnetPool
     {
         public IPAddress BaseNetWorkAddress { get; set; }

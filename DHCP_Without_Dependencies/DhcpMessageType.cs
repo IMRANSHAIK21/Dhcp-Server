@@ -8,13 +8,13 @@ namespace DHCP_Without_Dependencies
 {
     public enum DhcpMessageType : byte
     {
-        Discover = 1,
-        Offer = 2,
-        Request = 3,
-        Decline = 4,
-        Acknowledge = 5,
-        NoAcknowledge = 6,
-        Release = 7,
-        Inform = 8
+        Discover = 1, // Dhcp Discover
+        Offer = 2, // Dhcp Offer
+        Request = 3, // Dhcp Request
+        Decline = 4, // Dhcp Decline
+        Acknowledge = 5, // Dhcp Acknowledgement
+        NoAcknowledge = 6, // Dhcp Negative Acknowledgement
+        Release = 7, // Dhcp Release
+        Inform = 8 // Dhcp Inform
     }
 }

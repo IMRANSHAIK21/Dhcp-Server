@@ -45,7 +45,7 @@ namespace DHCP_Without_Dependencies
             if (message is not null && message.Options is not null)
             {
                 byte[] relayAgentInfoBytes = null;
-                var realy = message.Options.ContainsKey(DhcpOption.Option82) ? message.Options.TryGetValue(DhcpOption.Option82, out relayAgentInfoBytes) : false;
+                var realy = message.Options.ContainsKey(DhcpOption.RelayAgentInformation) ? message.Options.TryGetValue(DhcpOption.RelayAgentInformation, out relayAgentInfoBytes) : false;
                 if (realy && relayAgentInfoBytes is not null)
                 {
                     relayAgentInfo = ParseRealyAgentInformation(relayAgentInfoBytes);

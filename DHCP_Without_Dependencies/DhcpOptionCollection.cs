@@ -164,4 +164,4 @@ namespace DHCP_Without_Dependencies
             stream.WriteByte((byte)DhcpOption.End);
         }
     }
-}
+} 

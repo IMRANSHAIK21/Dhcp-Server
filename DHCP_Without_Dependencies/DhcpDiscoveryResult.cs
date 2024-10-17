@@ -5,8 +5,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
+//// The DhcpDiscoverResult class is designed to handle the creation of a DHCP OFFER message in response to a DHCP DISCOVER message. 
+//// It creates an offer with a specified IP address and lease time, copying necessary details from the original DISCOVER request. Some areas for improvement 
+//// include enhanced validation, better option handling, error logging, and configurability.
 namespace DHCP_Without_Dependencies
 {
+    /// This class contains the result of a DHCP Discover operation, including 
+    /// the original DHCP Disvocer message, the offered IP address, and the lease time for the offer.
     public class DhcpDiscoverResult
     {
         /// <summary>
@@ -24,6 +29,8 @@ namespace DHCP_Without_Dependencies
         /// </summary>
         public uint LeaseSeconds { get; }
 
+        /// this cannot be instantieate directly, it instatiate through Factory method patter which CreateOffer
+        // need to check how this is essential
         private DhcpDiscoverResult(DhcpMessage sourceMessage, IPAddress offeredIPAddress, uint leaseSeconds)
         {
             if (sourceMessage.Options.MessageType != DhcpMessageType.Discover)
@@ -36,52 +43,18 @@ namespace DHCP_Without_Dependencies
 
         /// <summary>
         /// Creates an offer based on a source request message.
+        /// This will takes th original DHCp Discover message, OfferedIP and the lease time and pass it to private constructor.
         /// </summary>
         public static DhcpDiscoverResult CreateOffer(DhcpMessage sourceMessage, IPAddress offeredIPAddress, uint leaseSeconds)
         {
+            // need to add the null checks if required
             return new DhcpDiscoverResult(sourceMessage, offeredIPAddress, leaseSeconds);
         }
 
-        internal DhcpMessage CreateMessage()
+        /// This create the new DHCP message with Replay and message type offer(indicating DHCP offer)
+        public DhcpMessage CreateMessage()
         {
-            //  [X] = handled here
-            //  [S] = handled by DhcpServer
-
-            //      Field      DHCPOFFER            DHCPACK              DHCPNAK
-            //      -----      ---------            -------              -------
-
-            //  [X] 'op'       BOOTREPLY            BOOTREPLY            BOOTREPLY
-            //  [X] 'htype'    Copy                 Copy                 Copy
-            //  [X] 'hlen'     Copy                 Copy                 Copy
-            //  [ ] 'hops'     -                    -                    -
-            //  [X] 'xid'      Copy                 Copy                 Copy
-            //  [ ] 'secs'     -                    -                    -
-            //  [ ] 'ciaddr'   -                    Copy                 -
-            //  [X] 'yiaddr'   IP address offered   IP address assigned  -
-            //  [ ] 'siaddr'   -                    -                    -
-            //  [X] 'flags'    Copy                 Copy                 Copy
-            //  [X] 'giaddr'   Copy                 Copy                 Copy
-            //  [X] 'chaddr'   Copy                 Copy                 Copy
-            //  [ ] 'sname'    Server name/options  Server name/options  -
-            //  [ ] 'file'     Boot file/options    Boot file/options     -
-            //  [ ] 'options'  options              options
-
-            //      Option                    DHCPOFFER    DHCPACK            DHCPNAK
-            //      ------                    ---------    -------            -------
-            //  [ ] Requested IP address      MUST NOT     MUST NOT           MUST NOT
-            //  [X] IP address lease time     MUST         MUST (DHCPREQUEST) MUST NOT
-            //                                             MUST NOT (DHCPINFORM)
-            //  [ ] Use 'file'/'sname' fields MAY          MAY                MUST NOT
-            //  [X] DHCP message type         DHCPOFFER    DHCPACK            DHCPNAK
-            //  [ ] Parameter request list    MUST NOT     MUST NOT           MUST NOT
-            //  [ ] Message                   SHOULD       SHOULD             SHOULD
-            //  [ ] Client identifier         MUST NOT     MUST NOT           MAY
-            //  [ ] Vendor class identifier   MAY          MAY                MAY
-            //  [X] Server identifier         MUST         MUST               MUST
-            //  [ ] Maximum message size      MUST NOT     MUST NOT           MUST NOT
-            //  [S] Subnet mask               MAY          MAY                MUST NOT
-            //  [ ] All others                MAY          MAY                MUST NOT
-
+            // need to check the exceptions
             var response = new DhcpMessage(DhcpOpcode.BootReply, DhcpMessageType.Offer)
             {
                 HardwareAddressType = SourceMessage.HardwareAddressType,
@@ -92,8 +65,18 @@ namespace DHCP_Without_Dependencies
                 RelayAgentIPAddress = SourceMessage.RelayAgentIPAddress,
                 ClientMacAddress = SourceMessage.ClientMacAddress,
             };
-
             response.Options.SetValue(DhcpOption.IPAddressLeaseTime, LeaseSeconds);
+
+            // need to check the adding of subnet mask and the Router details also because these are available in the Options
+            // need to check is this handled any where or not
+            // response.Options.SetValue(DhcpOption.SubnetMask, subnetMask);                // Subnet mask option
+            // response.Options.SetValue(DhcpOption.Router, gatewayIPAddress);              // Router (gateway) IP address option
+            // response.Options.SetValue(DhcpOption.DomainNameServer, dnsServerAddresses);  // DNS servers option
+            // response.Options.SetValue(DhcpOption.ServerIdentifier, serverIPAddress);     // Server identifier option
+            // response.Options.SetValue(DhcpOption.RenewalTimeValue, renewalTimeSeconds);  // Renewal (T1) time option
+            // response.Options.SetValue(DhcpOption.RebindingTimeValue, rebindingTimeSeconds); // Rebinding (T2) time option
+            // response.Options.SetValue(DhcpOption.BroadcastAddress, broadcastAddress);    // Broadcast address option
+            // response.Options.SetValue(DhcpOption.NetBIOSNameServer, netbiosNameServers); // NetBIOS name servers option
 
             return response;
         }

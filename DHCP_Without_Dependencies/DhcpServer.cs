@@ -11,12 +11,23 @@ namespace DHCP_Without_Dependencies
 {
     public abstract class DhcpServer
     {
+        // Where Dhcp Server listens the requests
         private const int ListeningPort = 67;
+
+        // Where the Client listens
         private const int ReplyPort = 68;
 
+        // To handle the incoming and outgoing DHCP messages.
         private UdpClient? _udpClient;
+
+        // the local IP address and port the server listens to for DHCP messages.
         private readonly IPEndPoint _localEndPoint;
+
+        //  The subnet mask for the server's network.
         private readonly IPAddress _subnetMask;
+
+        // Router Ip address
+        // this one i need to send it in the constructor
         private readonly IPAddress _router = IPAddress.Parse("192.168.2.10");
 
         private readonly object _controlSync = new object();
@@ -49,6 +60,7 @@ namespace DHCP_Without_Dependencies
 
         /// <summary>
         /// Starts the DHCP server.
+        /// Initialized the UDP Client
         /// </summary>
         public virtual void Start()
         {
@@ -122,22 +134,27 @@ namespace DHCP_Without_Dependencies
 
         /// <summary>
         /// This method is called anytime a socket error occurs during communcation. Socket errors cause the DHCP server to be stopped.
+        /// handles the Errors during communication
         /// </summary>
         /// <param name="ex">The SocketException that caused the error to occur.</param>
         protected abstract void OnSocketError(SocketException ex);
 
         /// <summary>
         /// This method is called anytime a message is received that contains errors.
+        /// Handles erros during message processing
         /// </summary>
         /// <param name="ex">The exception that occured during received message parsing.</param>
         protected abstract void OnMessageError(Exception ex);
 
+        //// This method will be continuously listening for incoming DHCP message, parses them and handles them accordingly based on their type.
+        //// need to check the adding retries for recoverable errors like Temprorary network issue
         private async void RunReceiveLoopAsync(UdpClient udpClient)
         {
             while (true)
             {
                 UdpReceiveResult result;
-
+                
+                // listening for udpClient result
                 try
                 {
                     result = await udpClient.ReceiveAsync().ConfigureAwait(false);
@@ -155,7 +172,7 @@ namespace DHCP_Without_Dependencies
                 }
 
                 DhcpMessage message;
-
+                // Here the message will be constructed.
                 try
                 {
                     message = new DhcpMessage(result.Buffer);
@@ -209,6 +226,8 @@ namespace DHCP_Without_Dependencies
             }
         }
 
+        //// This method sends the DHCP response to the client. The response includes various DHCP options, 
+        //// such as SubnetMask, Router, and ServerIdentifier. The response is sent to either the client's IP or broadcasted if no IP is available.
         private async void SendResponse(UdpClient client, DhcpMessage message, IPEndPoint destinationEndPoint)
         {
             if (message.Options.MessageType == DhcpMessageType.Offer || message.Options.MessageType == DhcpMessageType.Acknowledge)
